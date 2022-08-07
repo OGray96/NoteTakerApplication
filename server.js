@@ -2,7 +2,6 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const noteData = require('./db/db.json')
-// const api = require('./routes/index')
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -14,11 +13,14 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static('public'));
 
-
+//Directing users to notes page
 app.get('/notes', (req, res) => res.sendFile(path.join(__dirname, '/public/notes.html')));
 
+//Get method to recieve database of notes
 app.get('/api/notes', (req,res) => res.sendFile(path.join(__dirname, "/db/db.json")));
 
+
+//ADDING NEW NOTES
 app.post('/api/notes', (req,res) => {
 
   const {title, text} = req.body;
@@ -40,6 +42,7 @@ app.post('/api/notes', (req,res) => {
     
       fs.writeFile('./db/db.json',JSON.stringify(notes,null,4),
       (writeErr) => writeErr ? console.log(writeErr) : console.log('Note Added Succesfully'))
+      //Must be included to update sidebar of notes
       res.sendFile(path.join(__dirname, "/db/db.json"))
   }})
   };
@@ -47,6 +50,7 @@ app.post('/api/notes', (req,res) => {
 
 })
 
+//DELETE METHOD
 app.delete('/api/notes/:id', (req,res) => {
   const deleteId = req.params.id
   
@@ -57,6 +61,7 @@ app.delete('/api/notes/:id', (req,res) => {
         notes.splice(i,1)
         fs.writeFile('./db/db.json',JSON.stringify(notes,null,4),
         (writeErr) => writeErr ? console.log(writeErr) : console.log('Note succesfully deleted'))
+        //Must be included to update sidebar of notes
         res.sendFile(path.join(__dirname, "/db/db.json"))
       }
     }
